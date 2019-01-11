@@ -1,30 +1,19 @@
 import urllib.request, urllib.error
 import os
-from bs4 import BeautifulSoup
+from kinro import Kinro
+from premium_saturday import PremiumSaturday
 
 LINE_NOTIFY_URL = "https://notify-api.line.me/api/notify"
-KINRO_URL = "https://kinro.jointv.jp/lineup"
+messages = []
 
-class Movie:
+def handler(event, context):
+    programs = [Kinro(), PremiumSaturday()]
+    for program in programs:
+        messages.append(program.message())
+    messages = [message for message in messages if message]
 
-    def __init__(self, program_name, title, date):
-        self.program_name = program_name
-        self.title = title
-        self.date = date
-
-    def build_message(self):
-        return "%s\n%s : %s" % (self.program_name, self.date, self.title)
-
-def handler:
-    movies = []
-    html = urllib.request.urlopen(url=KINRO_URL)
-    soup = BeautifulSoup(html, "html.parser")
-    for lineup in soup.find(id="after_lineup").find_all('li'):
-        movie = Movie("金曜ロードショー", lineup.find(class_="date").get_text(), lineup.find(class_="title").get_text())
-        movies.append(movie)
-
-    for movie in movies:
-        send(movie.build_message())
+    for message in messages:
+        send(message)
 
 def send(message):
     headers = {"Authorization": "Bearer %s" % os.environ['LINE_TOKEN']}
