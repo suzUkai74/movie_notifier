@@ -4,10 +4,11 @@ from kinro import Kinro
 from premium_saturday import PremiumSaturday
 
 LINE_NOTIFY_URL = "https://notify-api.line.me/api/notify"
-messages = []
 
 def handler(event, context):
+    messages = []
     programs = [Kinro(), PremiumSaturday()]
+
     for program in programs:
         messages.append(program.message())
     messages = [message for message in messages if message]

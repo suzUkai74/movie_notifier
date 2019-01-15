@@ -14,12 +14,15 @@ class PremiumSaturday(Program):
     def scraping(self):
         html = urllib.request.urlopen(url=self.URL)
         soup = BeautifulSoup(html, "html.parser")
-        lineups = soup.find(id="lineup").find_all('div', class_="programbox")
+        lineups = soup.find(id="lineup").find_all('div', class_="programbox", limit=2)
         lineups = [lineup for lineup in lineups if self.string_to_date(self.find_date(lineup)) > datetime.date.today()]
         self.current = lineups[0]
-        self.next = lineups[1]
+        if len(lineups) > 1:
+            self.next = lineups[1]
 
     def string_to_date(self, date):
+        if date is None:
+            return None
         split_date = [int(s) for s in date.split('/')]
         today = datetime.date.today()
         year = today.year
@@ -32,7 +35,7 @@ class PremiumSaturday(Program):
         pattern = '(\d+\/\d+).*'
         repatter = re.compile(pattern)
         result = repatter.match(movie.find('span').get_text())
-        return result.group(1)
+        return result.group(1) if result is not None else None
 
     def find_title(self, movie):
         return movie.find('p').get_text().strip(movie.find('span').get_text())
