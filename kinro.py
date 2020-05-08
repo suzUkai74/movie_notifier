@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 
 class Kinro(Program):
     PROGRAM_NAME = "金曜ロードショー"
-    URL = "https://kinro.jointv.jp/lineup"
+    URL = "https://kinro.ntv.co.jp/lineup"
 
     def is_exec_day(self):
         return datetime.date.today().weekday() == 4
